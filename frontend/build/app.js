@@ -1,5 +1,5 @@
-const API_URL = 'http://localhost:8000';
-// const API_URL = 'https://big-times-knock.loca.lt';
+const API_URL = 'https://k-point-evaluation-app-tunnel-y0asvgbb.devinapps.com';
+// const API_URL = 'http://localhost:8000';
 
 async function login(email, password) {
   try {
