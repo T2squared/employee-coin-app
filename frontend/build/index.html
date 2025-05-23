@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Kポイント 従業員評価アプリ</title>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap" />
+  <style>
+    body {
+      font-family: 'Roboto', sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: #f5f5f5;
+    }
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+    header {
+      background-color: #1976d2;
+      color: white;
+      padding: 20px;
+      text-align: center;
+    }
+    .card {
+      background-color: white;
+      border-radius: 4px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+      margin-bottom: 20px;
+      padding: 20px;
+    }
+    .button {
+      background-color: #1976d2;
+      border: none;
+      border-radius: 4px;
+      color: white;
+      cursor: pointer;
+      font-size: 16px;
+      padding: 10px 20px;
+      text-align: center;
+      text-decoration: none;
+      display: inline-block;
+      margin: 10px 0;
+    }
+    .button:hover {
+      background-color: #1565c0;
+    }
+    .form-group {
+      margin-bottom: 15px;
+    }
+    label {
+      display: block;
+      margin-bottom: 5px;
+    }
+    input, select, textarea {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      box-sizing: border-box;
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 20px;
+    }
+    .transaction-list {
+      list-style: none;
+      padding: 0;
+    }
+    .transaction-item {
+      border-bottom: 1px solid #eee;
+      padding: 10px 0;
+    }
+    .balance {
+      font-size: 24px;
+      font-weight: bold;
+      color: #1976d2;
+    }
+    .tabs {
+      display: flex;
+      border-bottom: 1px solid #ddd;
+      margin-bottom: 20px;
+    }
+    .tab {
+      padding: 10px 20px;
+      cursor: pointer;
+    }
+    .tab.active {
+      border-bottom: 2px solid #1976d2;
+      color: #1976d2;
+    }
+    .tab-content {
+      display: none;
+    }
+    .tab-content.active {
+      display: block;
+    }
+    .notification {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      padding: 15px 20px;
+      background-color: #4caf50;
+      color: white;
+      border-radius: 4px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+      transform: translateY(-100px);
+      opacity: 0;
+      transition: all 0.3s ease;
+    }
+    .notification.error {
+      background-color: #f44336;
+    }
+    .notification.show {
+      transform: translateY(0);
+      opacity: 1;
+    }
+    .loading {
+      display: inline-block;
+      width: 20px;
+      height: 20px;
+      border: 3px solid rgba(255,255,255,.3);
+      border-radius: 50%;
+      border-top-color: #fff;
+      animation: spin 1s ease-in-out infinite;
+      margin-left: 10px;
+    }
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Kポイント 従業員評価アプリ</h1>
+  </header>
+  
+  <div class="container">
+    <div class="tabs">
+      <div class="tab active" onclick="showTab('login')">ログイン</div>
+      <div class="tab" onclick="showTab('employee')">従業員ダッシュボード</div>
+      <div class="tab" onclick="showTab('admin')">管理者ダッシュボード</div>
+    </div>
+    
+    <div id="login" class="tab-content active">
+      <div class="card">
+        <h2>ログイン</h2>
+        <form id="login-form">
+          <div class="form-group">
+            <label for="email">メールアドレス</label>
+            <input type="email" id="email" placeholder="メールアドレスを入力" required>
+          </div>
+          <div class="form-group">
+            <label for="password">パスワード</label>
+            <input type="password" id="password" placeholder="パスワードを入力" required>
+          </div>
+          <button type="submit" class="button">ログイン</button>
+        </form>
+        <div style="margin-top: 20px;">
+          <p><strong>デモアカウント:</strong></p>
+          <p>従業員: employee@example.com / パスワード: employee</p>
+          <p>管理者: admin@example.com / パスワード: admin</p>
+        </div>
+      </div>
+    </div>
+    
+    <div id="employee" class="tab-content">
+      <h2>従業員ダッシュボード</h2>
+      
+      <div class="grid">
+        <div class="card">
+          <h3>あなたの残高</h3>
+          <p class="balance">20 Kポイント</p>
+          <p>本日の残り送信回数: 2/3</p>
+          <button class="button" onclick="document.getElementById('transaction-form').style.display='block'">Kポイントを贈る</button>
+        </div>
+        
+        <div class="card">
+          <h3>最近の取引</h3>
+          <ul class="transaction-list" id="transaction-list">
+            <li class="transaction-item">
+              <strong>受取:</strong> 田中太郎さんから2ポイント<br>
+              <em>「昨日のプレゼンテーションが素晴らしかった！」</em><br>
+              <small>今日, 10:30</small>
+            </li>
+            <li class="transaction-item">
+              <strong>送信:</strong> 佐藤花子さんへ1ポイント<br>
+              <em>「プロジェクトの手伝いありがとう」</em><br>
+              <small>昨日, 15:45</small>
+            </li>
+          </ul>
+          <button class="button">全履歴を表示</button>
+        </div>
+      </div>
+      
+      <div id="transaction-form" class="card" style="display: none;">
+        <h3>Kポイントを贈る</h3>
+        <form id="transaction-form-element">
+          <div class="form-group">
+            <label for="recipient">受取人</label>
+            <select id="recipient" required>
+              <option value="">同僚を選択</option>
+              <option value="3">佐藤花子</option>
+              <option value="4">田中太郎</option>
+              <option value="5">鈴木一郎</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="amount">ポイント数</label>
+            <select id="amount" required>
+              <option value="1">1 ポイント</option>
+              <option value="2">2 ポイント</option>
+              <option value="3">3 ポイント</option>
+            </select>
+            <small>1〜3ポイントから選択できます</small>
+          </div>
+          <div class="form-group">
+            <label for="reason">理由 (10〜200文字)</label>
+            <textarea id="reason" rows="3" placeholder="なぜKポイントを贈りますか？" required minlength="10" maxlength="200"></textarea>
+          </div>
+          <button type="submit" class="button">送信</button>
+          <button type="button" class="button" style="background-color: #f44336;" onclick="document.getElementById('transfer-form').style.display='none'">キャンセル</button>
+        </form>
+      </div>
+    </div>
+    
+    <div id="admin" class="tab-content">
+      <h2>管理者ダッシュボード</h2>
+      
+      <div class="grid">
+        <div class="card">
+          <h3>システム概要</h3>
+          <p><strong>総供給量:</strong> 2000 Kポイント</p>
+          <p><strong>流通量:</strong> 1450 Kポイント</p>
+          <p><strong>未割当:</strong> 550 Kポイント</p>
+          <p><strong>アクティブユーザー:</strong> 87名</p>
+          <p><strong>現在の期間:</strong> 2024年第2四半期</p>
+        </div>
+        
+        <div class="card">
+          <h3>クイックアクション</h3>
+          <button class="button">ユーザー管理</button>
+          <button class="button">部署管理</button>
+          <button class="button">システム設定</button>
+          <button class="button">取引履歴検索</button>
+          <button class="button">Googleスプレッドシート同期</button>
+        </div>
+      </div>
+      
+      <div class="card">
+        <h3>トップ受取者 (現在の期間)</h3>
+        <ul class="transaction-list">
+          <li class="transaction-item">
+            <strong>佐藤花子:</strong> 45ポイント受取 (1-3ポイント × 20回)
+          </li>
+          <li class="transaction-item">
+            <strong>田中太郎:</strong> 39ポイント受取 (1-3ポイント × 18回)
+          </li>
+          <li class="transaction-item">
+            <strong>鈴木一郎:</strong> 33ポイント受取 (1-3ポイント × 15回)
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+  
+  <script src="app.js"></script>
+</body>
+</html>

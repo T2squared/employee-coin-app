@@ -1,12 +1,11 @@
-// const API_URL = 'http://localhost:8000';
-const API_URL = 'https://user:5b8c6f954ed091e5af51075a539eda7b@employee-coin-evaluation-app-tunnel-e6ag9bw7.devinapps.com';
+const API_URL = 'https://user:83f53df0a60aa5bb5de09afce2f7e7a8@k-point-evaluation-app-tunnel-724niz8c.devinapps.com';
 
 async function login(email, password) {
   try {
     const response = await fetch(`${API_URL}/api/auth/login`, {
       method: 'POST',
       headers: {
-        'Content-Type': 'application/json'
+        'Content-Type': 'application/json',
       },
       body: JSON.stringify({ email, password }),
     });
@@ -17,7 +16,6 @@ async function login(email, password) {
     
     const data = await response.json();
     localStorage.setItem('token', data.token);
-    localStorage.setItem('refreshToken', data.refreshToken);
     localStorage.setItem('user', JSON.stringify(data.user));
     return data.user;
   } catch (error) {
@@ -29,22 +27,13 @@ async function login(email, password) {
 async function getTransactions() {
   try {
     const token = localStorage.getItem('token');
-    
-    if (!token) {
-      throw new Error('認証が必要です');
-    }
-    
     const response = await fetch(`${API_URL}/api/transactions`, {
       headers: {
-        'Authorization': `Bearer ${token}`
+        'Authorization': `Bearer ${token}`,
       },
     });
     
     if (!response.ok) {
-      if (response.status === 401) {
-        await refreshToken();
-        return getTransactions(); // Retry with new token
-      }
       throw new Error('取引履歴の取得に失敗しました');
     }
     
@@ -58,25 +47,16 @@ async function getTransactions() {
 async function sendTransaction(recipientId, amount, reason) {
   try {
     const token = localStorage.getItem('token');
-    
-    if (!token) {
-      throw new Error('認証が必要です');
-    }
-    
     const response = await fetch(`${API_URL}/api/transactions`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': `Bearer ${token}`
+        'Authorization': `Bearer ${token}`,
       },
       body: JSON.stringify({ recipientId, amount, reason }),
     });
     
     if (!response.ok) {
-      if (response.status === 401) {
-        await refreshToken();
-        return sendTransaction(recipientId, amount, reason); // Retry with new token
-      }
       const errorData = await response.json();
       throw new Error(errorData.message || 'トランザクションの送信に失敗しました');
     }
@@ -84,39 +64,6 @@ async function sendTransaction(recipientId, amount, reason) {
     return await response.json();
   } catch (error) {
     console.error('Send transaction error:', error);
-    throw error;
-  }
-}
-
-async function refreshToken() {
-  try {
-    const refreshToken = localStorage.getItem('refreshToken');
-    
-    if (!refreshToken) {
-      throw new Error('リフレッシュトークンがありません');
-    }
-    
-    const response = await fetch(`${API_URL}/api/auth/refresh`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({ refreshToken }),
-    });
-    
-    if (!response.ok) {
-      localStorage.removeItem('token');
-      localStorage.removeItem('refreshToken');
-      localStorage.removeItem('user');
-      window.location.href = '/';
-      throw new Error('認証の更新に失敗しました');
-    }
-    
-    const data = await response.json();
-    localStorage.setItem('token', data.token);
-    return data;
-  } catch (error) {
-    console.error('Refresh token error:', error);
     throw error;
   }
 }
@@ -176,7 +123,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
   
-  const transactionForm = document.getElementById('transaction-form-element');
+  const transactionForm = document.getElementById('transaction-form');
   if (transactionForm) {
     transactionForm.addEventListener('submit', async (e) => {
       e.preventDefault();
@@ -197,16 +144,10 @@ document.addEventListener('DOMContentLoaded', () => {
       
       try {
         await sendTransaction(recipient, amount, reason);
-        const formElement = document.getElementById('transaction-form');
-        if (formElement) {
-          formElement.style.display = 'none';
-        }
+        document.getElementById('transfer-form').style.display = 'none';
         showNotification('Kポイントを送信しました');
-        const transactions = await getTransactions();
-        console.log('Updated transactions:', transactions);
         
       } catch (error) {
-        console.error('Transaction error:', error);
         showNotification('送信に失敗しました: ' + error.message, true);
       }
     });
