@@ -1,13 +1,12 @@
-// const API_URL = 'http://localhost:8000';
 const API_URL = 'https://user:539cd5c7b7806c593e078fd3493391b1@employee-coin-evaluation-app-tunnel-2nrzwlfo.devinapps.com';
+// const API_URL = 'http://localhost:8000';
 
 async function login(email, password) {
   try {
     const response = await fetch(`${API_URL}/api/auth/login`, {
       method: 'POST',
       headers: {
-        'Content-Type': 'application/json',
-        'Authorization': AUTH_HEADER
+        'Content-Type': 'application/json'
       },
       body: JSON.stringify({ email, password }),
     });

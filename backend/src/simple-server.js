@@ -17,7 +17,7 @@ app.use(cors({
     callback(null, true);
   },
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization'],
+  allowedHeaders: ['Content-Type', 'Authorization', 'JWT-Authorization'],
   credentials: true,
   exposedHeaders: ['Access-Control-Allow-Origin'],
   preflightContinue: false,
