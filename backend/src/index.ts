@@ -5,6 +5,14 @@ import { PrismaClient } from '@prisma/client';
 import http from 'http';
 import { Server } from 'socket.io';
 
+import authRoutes from './routes/auth.routes';
+import userRoutes from './routes/user.routes';
+import departmentRoutes from './routes/department.routes';
+import transactionRoutes from './routes/transaction.routes';
+import configRoutes from './routes/config.routes';
+import periodRoutes from './routes/period.routes';
+import syncRoutes from './routes/sync.routes';
+
 dotenv.config();
 
 const prisma = new PrismaClient();
@@ -14,7 +22,7 @@ const port = process.env.PORT || 8000;
 
 const server = http.createServer(app);
 
-const io = new Server(server, {
+export const io = new Server(server, {
   cors: {
     origin: process.env.FRONTEND_URL || 'http://localhost:3000',
     methods: ['GET', 'POST'],
@@ -24,6 +32,14 @@ const io = new Server(server, {
 
 app.use(cors());
 app.use(express.json());
+
+app.use('/api/auth', authRoutes);
+app.use('/api/users', userRoutes);
+app.use('/api/departments', departmentRoutes);
+app.use('/api/transactions', transactionRoutes);
+app.use('/api/config', configRoutes);
+app.use('/api/periods', periodRoutes);
+app.use('/api/sync', syncRoutes);
 
 app.get('/', (req: Request, res: Response) => {
   res.json({ message: 'Employee Coin-Based Evaluation App API' });
