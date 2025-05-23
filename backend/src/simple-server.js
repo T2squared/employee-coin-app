@@ -16,10 +16,14 @@ app.use(cors({
   origin: ['https://k-point-evaluation-app-mln4xy0x.devinapps.com', 
            'https://employee-coin-app-pgbi35x7.devinapps.com', 
            'http://localhost:8080',
-           'http://localhost:8081'],
+           'http://localhost:8081',
+           'https://employee-coin-evaluation-app-tunnel-2nrzwlfo.devinapps.com'],
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization'],
-  credentials: true
+  credentials: true,
+  exposedHeaders: ['Access-Control-Allow-Origin'],
+  preflightContinue: false,
+  optionsSuccessStatus: 204
 }));
 app.use(express.json());
 
@@ -98,10 +102,10 @@ app.post('/api/auth/login', (req, res) => {
 });
 
 const authenticateJWT = (req, res, next) => {
-  const authHeader = req.headers.authorization;
+  const authHeader = req.headers['authorization'];
   
   if (!authHeader) {
-    console.log('No authorization header, proceeding with default user');
+    console.log('No Authorization header, proceeding with default user');
     req.user = { userId: '2', role: 'EMPLOYEE' };
     return next();
   }

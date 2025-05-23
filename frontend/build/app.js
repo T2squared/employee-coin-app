@@ -1,12 +1,14 @@
 // const API_URL = 'http://localhost:8000';
-const API_URL = 'https://user:5b8c6f954ed091e5af51075a539eda7b@employee-coin-evaluation-app-tunnel-e6ag9bw7.devinapps.com';
+const API_URL = 'https://employee-coin-evaluation-app-tunnel-2nrzwlfo.devinapps.com';
+const AUTH_HEADER = 'Basic ' + btoa('user:539cd5c7b7806c593e078fd3493391b1');
 
 async function login(email, password) {
   try {
     const response = await fetch(`${API_URL}/api/auth/login`, {
       method: 'POST',
       headers: {
-        'Content-Type': 'application/json'
+        'Content-Type': 'application/json',
+        'Authorization': AUTH_HEADER
       },
       body: JSON.stringify({ email, password }),
     });
@@ -36,7 +38,7 @@ async function getTransactions() {
     
     const response = await fetch(`${API_URL}/api/transactions`, {
       headers: {
-        'Authorization': `Bearer ${token}`
+        'Authorization': AUTH_HEADER
       },
     });
     
@@ -67,7 +69,7 @@ async function sendTransaction(recipientId, amount, reason) {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': `Bearer ${token}`
+        'Authorization': AUTH_HEADER
       },
       body: JSON.stringify({ recipientId, amount, reason }),
     });
@@ -99,7 +101,8 @@ async function refreshToken() {
     const response = await fetch(`${API_URL}/api/auth/refresh`, {
       method: 'POST',
       headers: {
-        'Content-Type': 'application/json'
+        'Content-Type': 'application/json',
+        'Authorization': AUTH_HEADER
       },
       body: JSON.stringify({ refreshToken }),
     });
