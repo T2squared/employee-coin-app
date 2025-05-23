@@ -1,17 +1,12 @@
-const API_URL = 'https://k-point-evaluation-app-tunnel-724niz8c.devinapps.com';
-
-const API_USERNAME = 'user';
-const API_PASSWORD = '83f53df0a60aa5bb5de09afce2f7e7a8';
+const API_URL = 'http://localhost:8000';
+// const API_URL = 'https://k-point-evaluation-app-mln4xy0x.devinapps.com';
 
 async function login(email, password) {
   try {
-    const basicAuth = 'Basic ' + btoa(`${API_USERNAME}:${API_PASSWORD}`);
-    
     const response = await fetch(`${API_URL}/api/auth/login`, {
       method: 'POST',
       headers: {
-        'Content-Type': 'application/json',
-        'Authorization': basicAuth
+        'Content-Type': 'application/json'
       },
       body: JSON.stringify({ email, password }),
     });
@@ -101,13 +96,10 @@ async function refreshToken() {
       throw new Error('リフレッシュトークンがありません');
     }
     
-    const basicAuth = 'Basic ' + btoa(`${API_USERNAME}:${API_PASSWORD}`);
-    
     const response = await fetch(`${API_URL}/api/auth/refresh`, {
       method: 'POST',
       headers: {
-        'Content-Type': 'application/json',
-        'Authorization': basicAuth
+        'Content-Type': 'application/json'
       },
       body: JSON.stringify({ refreshToken }),
     });
