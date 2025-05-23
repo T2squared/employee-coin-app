@@ -1,0 +1,147 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id             String   @id @default(uuid())
+  name           String
+  email          String   @unique
+  passwordHash   String
+  role           Role     @default(EMPLOYEE)
+  departmentId   String?
+  department     Department? @relation(fields: [departmentId], references: [id])
+  currentBalance Int      @default(0)
+  isActive       Boolean  @default(true)
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  // Relations
+  sentTransactions     Transaction[] @relation("SenderRelation")
+  receivedTransactions Transaction[] @relation("RecipientRelation")
+  periodBalances       PeriodBalance[]
+  configUpdates        Config[]
+  createdPeriods       CoinSupplyPeriod[]
+  adminActions         AuditLog_AdminAction[]
+
+  @@map("users")
+}
+
+enum Role {
+  EMPLOYEE
+  ADMIN
+}
+
+model Department {
+  id                 String   @id @default(uuid())
+  name               String   @unique
+  parentDepartmentId String?
+  parentDepartment   Department? @relation("DepartmentHierarchy", fields: [parentDepartmentId], references: [id])
+  childDepartments   Department[] @relation("DepartmentHierarchy")
+  users              User[]
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
+
+  @@map("departments")
+}
+
+model Config {
+  key         String   @id
+  value       String
+  description String?
+  updatedAt   DateTime @updatedAt
+  updatedById String?
+  updatedBy   User?    @relation(fields: [updatedById], references: [id])
+
+  @@map("config")
+}
+
+model CoinSupplyPeriod {
+  id          String   @id @default(uuid())
+  periodName  String   @unique
+  startDate   DateTime
+  endDate     DateTime
+  totalSupply Int?
+  createdById String?
+  createdBy   User?    @relation(fields: [createdById], references: [id])
+  createdAt   DateTime @default(now())
+
+  // Relations
+  transactions   Transaction[]
+  periodBalances PeriodBalance[]
+
+  @@map("coin_supply_periods")
+}
+
+model PeriodBalance {
+  userId        String
+  user          User            @relation(fields: [userId], references: [id])
+  periodName    String
+  period        CoinSupplyPeriod @relation(fields: [periodName], references: [periodName])
+  balance       Int
+  snapshotDate  DateTime        @default(now())
+
+  @@id([userId, periodName, snapshotDate])
+  @@map("period_balances")
+}
+
+model Transaction {
+  id              String   @id @default(uuid())
+  senderId        String
+  sender          User     @relation("SenderRelation", fields: [senderId], references: [id])
+  recipientId     String
+  recipient       User     @relation("RecipientRelation", fields: [recipientId], references: [id])
+  amount          Int
+  reason          String
+  transactionTime DateTime @default(now())
+  periodName      String?
+  period          CoinSupplyPeriod? @relation(fields: [periodName], references: [periodName])
+
+  @@map("transactions")
+}
+
+model SyncLog {
+  id             String   @id @default(uuid())
+  runAt          DateTime @default(now())
+  jobType        JobType
+  status         SyncStatus
+  rowsProcessed  Int?
+  sheetUrl       String?
+  details        String?
+
+  @@map("sync_logs")
+}
+
+enum JobType {
+  EXPORT_GSHEET
+  IMPORT_USERS_GSHEET
+  QUARTERLY_RESET
+}
+
+enum SyncStatus {
+  SUCCESS
+  FAILED
+  PARTIAL_SUCCESS
+}
+
+model AuditLog_AdminAction {
+  id                String   @id @default(uuid())
+  adminUserId       String
+  adminUser         User     @relation(fields: [adminUserId], references: [id])
+  actionType        String
+  targetEntityType  String?
+  targetEntityId    String?
+  oldValue          String?
+  newValue          String?
+  timestamp         DateTime @default(now())
+  ipAddress         String?
+
+  @@map("audit_log_admin_actions")
+}
