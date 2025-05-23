@@ -1,12 +1,14 @@
-const API_URL = 'http://localhost:8000';
-// const API_URL = 'https://k-point-evaluation-app-mln4xy0x.devinapps.com';
+// const API_URL = 'http://localhost:8000';
+const API_URL = 'https://employee-coin-evaluation-app-tunnel-nt39mpus.devinapps.com';
+const AUTH_HEADER = 'Basic ' + btoa('user:bd45ae5c1badbb40c71139d73db21deb');
 
 async function login(email, password) {
   try {
     const response = await fetch(`${API_URL}/api/auth/login`, {
       method: 'POST',
       headers: {
-        'Content-Type': 'application/json'
+        'Content-Type': 'application/json',
+        'Authorization': AUTH_HEADER
       },
       body: JSON.stringify({ email, password }),
     });
@@ -36,7 +38,8 @@ async function getTransactions() {
     
     const response = await fetch(`${API_URL}/api/transactions`, {
       headers: {
-        'Authorization': `Bearer ${token}`
+        'Authorization': AUTH_HEADER,
+        'JWT-Authorization': `Bearer ${token}`
       },
     });
     
@@ -67,7 +70,8 @@ async function sendTransaction(recipientId, amount, reason) {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': `Bearer ${token}`
+        'Authorization': AUTH_HEADER,
+        'JWT-Authorization': `Bearer ${token}`
       },
       body: JSON.stringify({ recipientId, amount, reason }),
     });
@@ -99,7 +103,8 @@ async function refreshToken() {
     const response = await fetch(`${API_URL}/api/auth/refresh`, {
       method: 'POST',
       headers: {
-        'Content-Type': 'application/json'
+        'Content-Type': 'application/json',
+        'Authorization': AUTH_HEADER
       },
       body: JSON.stringify({ refreshToken }),
     });
