@@ -13,11 +13,9 @@ const app = express();
 const port = process.env.PORT || 8000;
 
 app.use(cors({
-  origin: ['https://k-point-evaluation-app-mln4xy0x.devinapps.com', 
-           'https://employee-coin-app-pgbi35x7.devinapps.com', 
-           'http://localhost:8080',
-           'http://localhost:8081',
-           'https://employee-coin-evaluation-app-tunnel-2nrzwlfo.devinapps.com'],
+  origin: function(origin, callback) {
+    callback(null, true);
+  },
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization'],
   credentials: true,
