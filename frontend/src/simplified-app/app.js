@@ -1,5 +1,5 @@
-const API_URL = 'http://localhost:8000';
-// const API_URL = 'https://employee-coin-evaluation-app-tunnel-2nrzwlfo.devinapps.com';
+const API_URL = 'https://employee-coin-evaluation-app-tunnel-2nrzwlfo.devinapps.com';
+// const API_URL = 'http://localhost:8000';
 
 // const BASIC_AUTH_USER = 'user';
 // const BASIC_AUTH_PASSWORD = '539cd5c7b7806c593e078fd3493391b1';
