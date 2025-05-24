@@ -1,8 +1,8 @@
-const API_URL = 'https://user:83f53df0a60aa5bb5de09afce2f7e7a8@employee-coin-evaluation-app-tunnel-2nrzwlfo.devinapps.com';
+const API_URL = 'https://employee-coin-evaluation-app-tunnel-2nrzwlfo.devinapps.com';
 // const API_URL = 'http://localhost:8000';
 
 // const BASIC_AUTH_USER = 'user';
-// const BASIC_AUTH_PASSWORD = '539cd5c7b7806c593e078fd3493391b1';
+// const BASIC_AUTH_PASSWORD = '83f53df0a60aa5bb5de09afce2f7e7a8';
 
 async function login(email, password) {
   try {

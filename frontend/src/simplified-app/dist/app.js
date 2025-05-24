@@ -174,7 +174,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
   
-  const transactionForm = document.getElementById('transaction-form');
+  const transactionForm = document.getElementById('transaction-form-element');
   if (transactionForm) {
     transactionForm.addEventListener('submit', async (e) => {
       e.preventDefault();
@@ -195,7 +195,10 @@ document.addEventListener('DOMContentLoaded', () => {
       
       try {
         await sendTransaction(recipient, amount, reason);
-        document.getElementById('transfer-form').style.display = 'none';
+        const formElement = document.getElementById('transaction-form');
+        if (formElement) {
+          formElement.style.display = 'none';
+        }
         showNotification('Kポイントを送信しました');
         
       } catch (error) {
