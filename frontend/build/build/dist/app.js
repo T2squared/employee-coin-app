@@ -1,4 +1,4 @@
-const API_URL = 'https://user:83f53df0a60aa5bb5de09afce2f7e7a8@k-point-evaluation-app-tunnel-724niz8c.devinapps.com';
+const API_URL = 'https://employee-coin-evaluation-app-tunnel-2nrzwlfo.devinapps.com';
 
 async function login(email, password) {
   try {
