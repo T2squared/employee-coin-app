@@ -14,6 +14,7 @@ const port = process.env.PORT || 8000;
 
 app.use(cors({
   origin: function(origin, callback) {
+    // Allow requests from the frontend domain and development environment
     const allowedOrigins = [
       'https://k-point-evaluation-app-mln4xy0x.devinapps.com',
       'http://localhost:3000'
@@ -24,12 +25,12 @@ app.use(cors({
     if (allowedOrigins.indexOf(origin) !== -1 || process.env.NODE_ENV === 'development') {
       callback(null, true);
     } else {
-      callback(null, true); // During development, allow all origins
+      callback(null, true);
     }
   },
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization', 'JWT-Authorization', 'Basic-Auth'],
-  credentials: true,
+  credentials: false, // Set to false for staging environment
   exposedHeaders: ['Access-Control-Allow-Origin'],
   preflightContinue: false,
   optionsSuccessStatus: 204
